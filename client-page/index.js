@@ -86,6 +86,7 @@ function init() {
     
     let map = new google.maps.Map(document.getElementById("map"), {
         zoom: 14,
+        minZoom: 3,
         center: Coords,
         styles: stylesArray,
         mapTypeControl: false,
