@@ -39,10 +39,10 @@ var pipe;
 
 		this.canvas.width = this.width;
 		this.canvas.height = this.height;
+
+		this.render();
 	};
 	pipe.PipeNodeRenderer.prototype.draw = function(time = 0) {
-		console.log("sus");
-
 		let scale = pipe.Renderer.getScaleFactor();
 
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

@@ -40,7 +40,7 @@ var pipe;
 	};
 	pipe.Renderer.prototype.render = function(time) {
 		let scale = pipe.Renderer.getScaleFactor();
-
+		
 		if (this.canvas.width * scale > 1 && this.canvas.height * scale > 1) {
 			this.draw(time);
 		}	
