@@ -1,3 +1,5 @@
+let url = new URL(window.location.href).hostname;
+
 function init() {
     let Coords = {lat: 55.324, lng: -2.859};
     
@@ -116,7 +118,7 @@ function init() {
                 body: JSON.stringify(mapsMouseEvent.latLng)
             }; 
             
-            let response = await fetch("http://127.0.0.1:3000/report", payload);
+            let response = await fetch(`http://${url}:3000/report`, payload);
             let data = await response.json();
             
             alert(data);
