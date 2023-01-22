@@ -1,12 +1,48 @@
 const express = require("express");
 const app = express();
 
+const cors = require('cors');
+app.use(cors());
+
 app.use(express.static("static"));
 app.use(express.json());
 
-app.get("/", function(req, resp) 
-{
+app.get("/", function(req, resp) {
     resp.sendFile(`${__dirname}/static/main.html`);
+});
+
+app.use(express.static("client-page"));
+app.use(express.json());
+
+app.get("/client-page/", function(req, resp) {
+    resp.sendFile(`${__dirname}/client-page/index.html`);
+});
+
+let data = [];
+
+app.post("/report", function(req, resp){
+    console.log("report called")
+    try{
+        data.push(req.body);
+        console.log(data);
+        console.log(req.body);
+        resp.send(JSON.stringify("Report successfully sent."));
+    } catch(e) {
+        console.log(e)
+        resp.send(JSON.stringify("Error submitting report, please try again later."));
+    }    
+});
+
+app.get("/refresh", function(req, resp){
+    
+    try{
+        console.log(data);
+        resp.send(JSON.stringify(data));
+        data = [];
+    } catch(e) {
+        console.log(e);
+        resp.send(JSON.stringify("Error sending heatmap data. please try again later."));
+    }
 });
 
 module.exports = app;

@@ -1,12 +1,7 @@
-/**
- * @namespace map
- */
-var map;
-(function (map) 
-{
-	map.instance = null;
+function init() {
+    let Coords = {lat: 55.324, lng: -2.859};
     
-    map.stylesArray = [
+    let stylesArray = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
@@ -85,79 +80,52 @@ var map;
           elementType: "labels.text.stroke",
           stylers: [{ color: "#17263c" }],
         }
-    ];
+    ]
     
-    map.alternateStylesArray = [
-    ];
+    let map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 8,
+        center: Coords,
+        styles: stylesArray,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        panControl: false,
+        fullscreenControl: false
+    });
+    let infoWindow = new google.maps.InfoWindow({
+        content: "Click to send a report at your location on the map :)",
+        position: Coords,
+    });
+    infoWindow.open(map);
     
-    map.togglables = [
-        {
-            featureType: "road",
-            elementType: "labels",
-            stylers: [
-                {visibility: "off"},
-            ]
-        },
-        {
-            featureType: "administrative",
-            elementType: "all",
-            stylers: [
-                {visibility: "off"},
-            ]
-        },
-        {
-            featureType: "poi",
-            elementType: "all",
-            stylers: [
-                {visibility: "off"},
-            ]
-        },
-        {    
-            featureType: "landscape.man_made",
-            elementType: "all",
-            stylers: [
-                {visibility: "off"},
-            ]
-        },
-        {    
-            featureType: "landscape.natural.terrain",
-            elementType: "all",
-            stylers: [
-                {visibility: "off"},
-            ]
-        }
-    ];
-    
-	map.init = function() {
-		let element = document.getElementById("map");
-        map.heatMapData = new google.maps.MVCArray();
-        
-	    map.instance = new google.maps.Map(element, {
-	        center: { lat: 27.93, lng: 86.10 },
-	        zoom: 8,
-            styles: map.stylesArray.concat(map.togglables),
-            mapTypeControl: false,
-            scaleControl: false,
-            streetViewControl: false,
-            rotateControl: false,
-            panControl: false,
-            fullscreenControl: false
-	    });
-        
-        map.heatmap = new google.maps.visualization.HeatmapLayer({
-            data: map.heatMapData
+    map.addListener("click", async function(mapsMouseEvent) {
+        infoWindow.close();
+        infoWindow = new google.maps.InfoWindow({
+            position: mapsMouseEvent.latLng
         });
+        infoWindow.setContent(
+            JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
+        );
+        infoWindow.open(map);
         
-        map.heatmap.setMap(map.instance);
-        
-	};
-    
-    map.updateHeatmap = function(data) {
-        for (let i = 0; i < data.length; i++){
-            map.heatMapData.push(new google.maps.LatLng(
-                data[i].lat, data[i].lng
-            ));
+        try{
+            let payload = {
+                method: "POST",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify(mapsMouseEvent.latLng)
+            }; 
+            
+            let response = await fetch("http://127.0.0.1:3000/report", payload);
+            let data = await response.json();
+            
+            alert(data);
+            
+        }catch(e){
+            alert(e);
         }
-    }
-    
-})(map || (map = {}));
+        
+    });
+};
+
+window.init = init;

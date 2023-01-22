@@ -1,15 +1,34 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Demo Site</title>
+        <title>Pipe Planner</title>
         <link rel="stylesheet" href="styles/main.css">
 	    <script src="main.js"></script>
 	    <script src="scripts/map.js"></script>
 	    <script src="scripts/pipe.js"></script>
 	    <script src="scripts/ui.js"></script>
-	    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAf5zwgKKKuOyuoy2pTiDMXkNHKL3ejnCM&callback=init&v=weekly" defer></script>
+	    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAf5zwgKKKuOyuoy2pTiDMXkNHKL3ejnCM&libraries=visualization&callback=init&v=weekly" defer></script>
     </head>
     <body>
-	    <div id="map"></div>
+        <div class="content">
+            <div id="map"></div>
+        </div>
+        <div class="content overlay">
+            <div class="sidebar" id="sidebar" onclick="ui.toggleSidebar();">
+               <div class="btn-group">
+                   <button class="button" role="button" onclick="ui.toggleVisibility('road')">Road Labels</button>
+                   
+                   <button class="button" role="button" onclick="ui.toggleVisibility('poi')">Places of Interest</button>
+                   
+                   <button class="button" role="button" onclick="ui.toggleVisibility('landscape.man_made')">Building Terrain</button>
+                   
+                   <button class="button" role="button" onclick="ui.toggleVisibility('landscape.natural.terrain')">Natural Terrain</button>
+                   
+                   <button class="button" role="button" onclick="ui.refreshHeatmap()">Refresh Heatmap</button>
+                   
+                   <button class="button" role="button" onclick="ui.changeColourScheme()">Light / Dark Mode</button>
+               </div>
+            </div>
+        </div>
     </body>
 </html>
