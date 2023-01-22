@@ -1,7 +1,7 @@
 let url = new URL(window.location.href).hostname;
 
 function init() {
-    let Coords = {lat: 55.324, lng: -2.859};
+    let Coords = {lat: 54.77557699364985, lng: -1.5854189367600946};
     
     let stylesArray = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
@@ -85,7 +85,7 @@ function init() {
     ]
     
     let map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 8,
+        zoom: 14,
         center: Coords,
         styles: stylesArray,
         mapTypeControl: false,
