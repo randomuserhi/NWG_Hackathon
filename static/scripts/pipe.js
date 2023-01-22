@@ -40,7 +40,8 @@ var pipe;
 	};
 	pipe.Renderer.prototype.render = function(time) {
 		let scale = pipe.Renderer.getScaleFactor();
-		
+
+		// TODO:: dont just check scale, also check map bounds (effectively culling)
 		if (this.canvas.width * scale > 1 && this.canvas.height * scale > 1) {
 			this.draw(time);
 		}	
