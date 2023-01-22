@@ -4,6 +4,7 @@
 var ui;
 (function (ui) 
 {
+	
     ui.toggleVisibility = function(feature) {
         let vision = map.togglables.filter(s=>s.featureType==feature)[0].stylers.filter(i=>i.visibility)[0];
         

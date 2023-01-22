@@ -1,7 +1,6 @@
-function init() 
-{
-    pipe.init();
+function init() {
     map.init();
+    pipe.init();
 }
 
 window.init = init;

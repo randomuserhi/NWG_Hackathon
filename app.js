@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 
+//https://stackoverflow.com/questions/57009371/access-to-xmlhttprequest-at-from-origin-localhost3000-has-been-blocked
 const cors = require('cors');
 app.use(cors());
 

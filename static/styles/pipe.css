@@ -1,0 +1,30 @@
+.pipe-renderer,
+.node-renderer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 500;
+	pointer-events: none;
+}
+.node-renderer {
+	z-index: 750;
+}
+
+.start {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 10px;
+	height: 10px;
+	background-color: red;
+	display: none;
+}
+.end {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 10px;
+	height: 10px;
+	background-color: blue;
+	display: none;
+}

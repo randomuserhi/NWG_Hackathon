@@ -1,5 +1,6 @@
 # remove this cause worstie
 package.json
+package-lock.json
 
 # Logs
 logs

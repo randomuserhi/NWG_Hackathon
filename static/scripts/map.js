@@ -133,8 +133,8 @@ var map;
         map.heatMapData = new google.maps.MVCArray();
         
 	    map.instance = new google.maps.Map(element, {
-	        center: { lat: 27.93, lng: 86.10 },
-	        zoom: 8,
+	        center: { lat: 54.77557699364985, lng: -1.5854189367600946 },
+	        zoom: 22,
             styles: map.stylesArray.concat(map.togglables),
             mapTypeControl: false,
             scaleControl: false,
