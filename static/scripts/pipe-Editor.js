@@ -29,7 +29,8 @@ var pipe;
 			type: "",
 			grabbed: false,
 			editMode: true,
-			selected: null
+			selected: null,
+			prevmouse: null
 		};
 
 		let call = function(e, mouse, event) { 
@@ -142,8 +143,8 @@ var pipe;
 						}
 					}
 				}
-				else if (this.interactState.mode == "CREATE" && event == "mousedown") {
-					if (this.activeSystem) {
+				else if (this.interactState.mode == "CREATE" && event == "mouseup") {
+					if (this.activeSystem && mouse.x == this.interactState.prevmouse.x && mouse.y == this.interactState.prevmouse.y) {
 						let n = new pipe.PipeNode({ lat: e.latLng.lat(), lng: e.latLng.lng() });
 						n.properties.name = "NODE #" + (this.nid++).toString();
 						this.activeSystem.nodes.push(n);
@@ -184,6 +185,7 @@ var pipe;
 					renderer.recalc();
 				}
 
+				this.interactState.prevmouse = { x: mouse.x, y: mouse.y };
 				return;
 			}
 
@@ -274,6 +276,9 @@ var pipe;
 		});
 
 		this.addEventListener("mouseup", (e) => {
+			let mouse = pipe.transformClientPoint(e.domEvent.clientX, e.domEvent.clientY);
+			call(e, mouse, "mouseup");
+
 			this.interactState.grabbed = false;
 		});
 	};
