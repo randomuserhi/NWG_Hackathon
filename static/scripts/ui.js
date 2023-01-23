@@ -28,6 +28,9 @@ var ui;
         // Swap SideBar colour scheme
         let sidebar = document.getElementById("sidebar");
         sidebar.classList.toggle("light");
+        
+        // Swap Heatmap colour scheme
+        map.heatmap.set("gradient", map.heatmap.get("gradient") ? null : map.heatMapGradient)
     }
     
     ui.toggleSidebar = function() {
@@ -39,6 +42,8 @@ var ui;
         try {
             let response = await fetch("http://127.0.0.1:3000/refresh");
             let newData = await response.json();
+            console.log(newData)
+            map.reportData.push(newData)
             map.updateHeatmap(newData);
         } catch(e) {
             console.log(e);
@@ -46,5 +51,7 @@ var ui;
         }
   
     }
+    
+    setInterval(ui.refreshHeatmap, 5);
 
 })(ui || (ui = {}));
