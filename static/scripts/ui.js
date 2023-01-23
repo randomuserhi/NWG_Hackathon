@@ -44,14 +44,27 @@ var ui;
         try {
             let response = await fetch("http://127.0.0.1:3000/refresh");
             let newData = await response.json();
-            console.log(newData)
-            map.reportData.push(newData)
+            if (newData.length != 0){
+                (map.reportData).push(...newData);
+            };
+            
             map.updateHeatmap(newData);
         } catch(e) {
             console.log(e);
             alert(e);
-        }
+        };
   
+    }
+    
+    ui.toggleHeatmapMarkers = function() {
+        if (map.heatmap.getMap() == map.instance){
+            (map.heatmap).setMap(null);
+            (map.markers).set("visible", map.instance);
+        } else {
+            (map.heatmap).setMap(map.instance);
+            (map.markers).set("visible", null);
+            map.infoWindow.close();
+        };
     }
     
     setInterval(ui.refreshHeatmap, 5);

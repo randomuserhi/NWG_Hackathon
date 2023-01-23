@@ -150,7 +150,11 @@ var map;
 	map.init = function() {
 		let element = document.getElementById("map");
         map.reportData = [];
+        map.infoWindow = new google.maps.InfoWindow();
         map.heatMapData = new google.maps.MVCArray();
+        map.markers = new google.maps.MVCArray();
+        map.markers.setValues({visible: null})
+        
         
 	    map.instance = new google.maps.Map(element, {
 	        center: { lat: 54.77557699364985, lng: -1.5854189367600946 },
@@ -174,10 +178,35 @@ var map;
     
     map.updateHeatmap = function(data) {
         for (let i = 0; i < data.length; i++){
+            
             map.heatMapData.push(new google.maps.LatLng(
-                data[i].lat, data[i].lng
+                data[i].coords.lat, data[i].coords.lng
             ));
-        }
+            
+            let a = new google.maps.Marker({
+                position: new google.maps.LatLng(data[i].coords.lat, data[i].coords.lng)
+            });
+            a.bindTo("map", map.markers, "visible");
+            
+            a.addListener("click", () => {
+                map.infoWindow.close();
+                
+                map.infoWindow = new google.maps.InfoWindow({
+                    content: [
+                            "<b>Name:</b> " + data[i].name + "<br>", 
+                            "<b>Description:</b> " + data[i].description
+                        ].join(""),
+                    position: new google.maps.LatLng(data[i].coords.lat, data[i].coords.lng)
+                });
+                
+                map.infoWindow.setOptions({
+                    minWidth: 200,
+                    maxWidth: 200   
+                });
+                
+                map.infoWindow.open(map.instance);
+            });
+        };
     };
     
 })(map || (map = {}));

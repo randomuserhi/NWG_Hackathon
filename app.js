@@ -25,8 +25,6 @@ app.post("/report", function(req, resp){
     console.log("report called")
     try{
         data.push(req.body);
-        console.log(data);
-        console.log(req.body);
         resp.send(JSON.stringify("Report successfully sent."));
     } catch(e) {
         console.log(e)
@@ -37,7 +35,6 @@ app.post("/report", function(req, resp){
 app.get("/refresh", function(req, resp){
     
     try{
-        console.log(data);
         resp.send(JSON.stringify(data));
         data = [];
     } catch(e) {
