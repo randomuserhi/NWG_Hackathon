@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @namespace ui
  */
@@ -20,7 +22,7 @@ var ui;
     
     ui.changeColourScheme = function() {
         // Swap map colour scheme
-        temp = map.stylesArray
+        let temp = map.stylesArray
         map.stylesArray = map.alternateStylesArray
         map.alternateStylesArray = temp
         map.instance.setOptions({styles: map.stylesArray.concat(map.togglables)})

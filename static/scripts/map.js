@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @namespace map
  */
@@ -152,7 +154,7 @@ var map;
         
 	    map.instance = new google.maps.Map(element, {
 	        center: { lat: 54.77557699364985, lng: -1.5854189367600946 },
-	        zoom: 10,
+	        zoom: 22,
             minZoom: 3,
             styles: map.stylesArray.concat(map.togglables),
             mapTypeControl: false,
@@ -168,7 +170,6 @@ var map;
         });
         
         map.heatmap.setMap(map.instance);
-        
 	};
     
     map.updateHeatmap = function(data) {

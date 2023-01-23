@@ -5,11 +5,13 @@
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="styles/pipe.css">
 	    <script src="main.js"></script>
+        <script src="scripts/v2.js"></script>
 	    <script src="scripts/map.js"></script>
 	    <script src="scripts/pipe.js"></script>
-        <script src="scripts/pipe-PipeSystem.js"></script>
         <script src="scripts/pipe-Node.js"></script>
         <script src="scripts/pipe-Pipe.js"></script>
+        <script src="scripts/pipe-PipeSystem.js"></script>
+        <script src="scripts/pipe-Editor.js"></script>
 	    <script src="scripts/ui.js"></script>
 	    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAf5zwgKKKuOyuoy2pTiDMXkNHKL3ejnCM&libraries=visualization&callback=init&v=weekly" defer></script>
     </head>
@@ -18,6 +20,61 @@
             <div id="map"></div>
         </div>
         <div class="content overlay">
+            <div style="position: absolute; right: 0; top: 0; pointer-events: auto;">
+                <div>
+                    <button id="select">Select</button>
+                    <button id="edit">Edit</button>
+                    <button id="create">Create</button>
+                    <button id="join">Join</button>
+                    <button id="delete">Delete</button>
+                </div>
+                <div id="item-content-pipe">
+                    <div>
+                        <span>Name: </span>
+                        <input type="text" id="pipe-name"></input>
+                    </div>
+                    <div>
+                        <span>Flow: </span>
+                        <input type="range" min="-100" max="100" value="50" id="pipe-flow"></input>
+                    </div>
+                    <div>
+                        <span>Pressure: </span>
+                        <input type="range" min="1" max="100" value="50" id="pipe-pressure"></input>
+                    </div>
+                    <div>
+                        <span>Diameter: </span>
+                        <input type="number" id="pipe-diameter"></input>
+                    </div>
+                    <div>
+                        <span>Status: </span>
+                        <select id="pipe-status">
+                            <option value="WORKING" selected>WORKING</option>
+                            <option value="FAULTY">FAULTY</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="item-content-node">
+                    <div>
+                        <span>Name: </span>
+                        <input type="text" id="node-name"></input>
+                    </div>
+                    <div>
+                        <span>Height: </span>
+                        <input type="number" id="node-height"></input>
+                    </div>
+                    <div>
+                        <span>Demand: </span>
+                        <input type="number" id="node-demand"></input>
+                    </div>
+                    <div>
+                        <span>Status: </span>
+                        <select id="node-status">
+                            <option value="WORKING" selected>WORKING</option>
+                            <option value="FAULTY">FAULTY</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="sidebar" id="sidebar" onclick="ui.toggleSidebar();">
                <div class="btn-group">
                    <button class="button" role="button" onclick="ui.toggleVisibility('road')">Road Labels</button>
