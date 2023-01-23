@@ -36,14 +36,14 @@ var pipe;
 		let call = function(e, mouse, event) { 
 			if (this.interactState.grabbed) {
 
-				if (this.interactState.mode == "SELECT") {
+				if (this.interactState.mode == "SELECT" && event == "mouseup") {
 					if (this.interactState.target) {
 						if (this.interactState.selected) {
 							this.interactState.selected.state.selected = false;
 							pipe.editN = null;
 							pipe.editP = null;
-							document.getElementById("item-content-pipe").style.display = "none";
-							document.getElementById("item-content-node").style.display = "none";
+							document.getElementById("item-content-pipe").style.top = "-200px";
+							document.getElementById("item-content-node").style.top = "-200px";
 						}
 						this.interactState.selected = this.interactState.target;
 						this.interactState.selected.state.selected = true;
@@ -54,8 +54,8 @@ var pipe;
 						switch(this.interactState.type) {
 							case "NODE": {
 								let n = this.interactState.target.pipeNode;
-								containerP.style.display = "none";
-								containerN.style.display = "flex";
+								containerP.style.top = "-200px";
+								containerN.style.top = "60px";
 								pipe.editN = n;
 								document.getElementById("node-name").value = n.properties.name;
 								document.getElementById("node-demand").value = n.properties.demand;
@@ -67,8 +67,8 @@ var pipe;
 							case "PIPE":
 							case "PIPE-JOINT": {
 								let p = this.interactState.target.pipe;
-								containerN.style.display = "none";
-								containerP.style.display = "flex";
+								containerN.style.top = "-200px";
+								containerP.style.top = "60px";
 								pipe.editP = p;
 								document.getElementById("pipe-name").value = p.properties.name;
 								document.getElementById("pipe-flow").value = p.sim.flow;
@@ -78,12 +78,12 @@ var pipe;
 							break;
 						}
 					}
-					else {
+					else if (mouse.x == this.interactState.prevmouse.x && mouse.y == this.interactState.prevmouse.y) {
 						if (this.interactState.selected) this.interactState.selected.state.selected = false;
 						pipe.editN = null;
 						pipe.editP = null;			
-						document.getElementById("item-content-pipe").style.display = "none";
-						document.getElementById("item-content-node").style.display = "none";
+						document.getElementById("item-content-pipe").style.top = "-200px";
+						document.getElementById("item-content-node").style.top = "-200px";
 					}
 				}
 				else if (this.interactState.mode == "EDIT") {
@@ -101,6 +101,14 @@ var pipe;
 								let obj = this.interactState.object;
 								p.pipe.points[obj.joint].lat = e.latLng.lat();
 								p.pipe.points[obj.joint].lng = e.latLng.lng();
+
+								if (obj.joint == 0 || obj.joint == p.pipe.points.length - 1) {
+									let n = p.pipe.points[obj.joint];
+									for (let renderer of this.renderers.values()) {
+										let objects = [ n, ...renderer.pipeSystem.pipes.filter(p => p.start == n || p.end == n) ];
+										renderer.recalc(objects);
+									}
+								}
 							};
 							break;
 
@@ -114,6 +122,8 @@ var pipe;
 									this.interactState.object.created = true;
 								}
 
+								if (event == "mousedown") p.state.dragging = true;
+								else if (event == "mouseup") p.state.dragging = false;
 								p.pipe.points[obj.segment+1].lat = e.latLng.lat();
 								p.pipe.points[obj.segment+1].lng = e.latLng.lng();
 							};
@@ -180,9 +190,21 @@ var pipe;
 					}
 				}
 
-				// commit changes
+				// commit changes - todo optimize by passing in only the things that changed
 				for (let renderer of this.renderers.values()) {
-					renderer.recalc();
+					if (this.interactState.mode == "EDIT" && this.interactState.type == "NODE" || this.interactState.type == "PIPE" || this.interactState.type == "PIPE-JOINT" ) {
+						if (this.interactState.type == "NODE") {
+							let n = this.interactState.target.pipeNode;
+							let objects = [ n, ...renderer.pipeSystem.pipes.filter(p => p.start == n || p.end == n) ];
+							renderer.recalc(objects);
+						}
+						else if (this.interactState.type == "PIPE" || this.interactState.type == "PIPE-JOINT") {
+							let n = this.interactState.target.pipe;
+							let objects = [ n ];
+							renderer.recalc(objects);
+						}
+					}
+					else renderer.recalc();
 				}
 
 				this.interactState.prevmouse = { x: mouse.x, y: mouse.y };

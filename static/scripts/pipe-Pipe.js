@@ -9,6 +9,8 @@ var pipe;
 	pipe.Pipe = function(start, end) {
 		pipe.Object.call(this); // invoke inherited constructor
 
+		this.start = start;
+		this.end = end;
 		this.points = [
 				start, 
 				end
@@ -17,7 +19,7 @@ var pipe;
 		this.properties = {
 			diameter: 10,
 			name: "",
-			status: "Working"
+			status: "WORKING"
 		}
 
 		this.sim = {
@@ -49,7 +51,7 @@ var pipe;
 		this.points = [];
 		this.bottomLeft = new v2();
 		this.topRight = new v2();
-		this.padding = 200;
+		this.padding = 400;
 
 		this.animTime = 2;
 
@@ -60,7 +62,8 @@ var pipe;
 		this.state = {
 			hovering: false,
 			selected: false,
-			edge: false
+			edge: false,
+			dragging: false
 		};
 
 		this.addEventListener("attach", () => { this.canvas.classList.add("pipe-renderer"); });
@@ -84,7 +87,7 @@ var pipe;
 			else if(v2.dot(v2.sub(b, a),v2.sub(location, b)) > 0) pointOnLine = v2.from(b);
 			else pointOnLine = v2.add(a, v2.proj(v2.sub(location, a), v2.sub(b, a)));
 
-			dist.push({ segment: i, sqrdistance: v2.sqrdist(pointOnLine, location) });
+			dist.push({ segment: i, sqrdistance: v2.sqrdist(pointOnLine, location), point: pointOnLine });
 		}
 
 		dist = dist.sort((a, b) => { return a.sqrdistance - b.sqrdistance; });
@@ -92,7 +95,7 @@ var pipe;
 
 		return dist[0].sqrdistance;
 	}
-	pipe.PipeRenderer.prototype.inScreenRange = function(location, distance = 50) {
+	pipe.PipeRenderer.prototype.inScreenRange = function(location, distance = 60) {
 		if (!this.canvas) return false;
 
 		let scale = pipe.Renderer.getScaleFactor();
@@ -145,8 +148,7 @@ var pipe;
 				p = transformPoint(this.points[i]);
 				this.ctx.lineTo(p.x, p.y);
 				this.ctx.moveTo(p.x, p.y);
-			}
-
+			} 
 			this.ctx.strokeStyle = color;
 			this.ctx.lineWidth = thickness * scale;
 			this.ctx.lineCap = "round";
@@ -165,7 +167,7 @@ var pipe;
 			let a = transformPoint(this.points[this.interactState.closest.segment]);
 			let b = transformPoint(this.points[this.interactState.closest.segment+1]);
 
-			if (this.state.hovering) {
+			/*if (this.state.hovering) {
 				this.ctx.moveTo(a.x, a.y);
 				this.ctx.lineTo(b.x, b.y);
 
@@ -174,7 +176,7 @@ var pipe;
 				this.ctx.lineCap = "round";
 				this.ctx.stroke();
 			}
-			else if (this.state.edge) {
+			else*/ if (this.state.edge) {
 				let cap = 80 * scale;
 
 				let diff = v2.sub(b, a);
@@ -183,7 +185,7 @@ var pipe;
 				this.ctx.moveTo(a.x, a.y);
 				this.ctx.lineTo(a.x + diff.x / mag * cap, a.y + diff.y / mag * cap);
 
-				this.ctx.strokeStyle = "white";
+				this.ctx.strokeStyle = "#856440";
 				this.ctx.lineWidth = 70 * scale;
 				this.ctx.lineCap = "round";
 				this.ctx.stroke();
@@ -194,7 +196,7 @@ var pipe;
 				this.ctx.moveTo(b.x, b.y);
 				this.ctx.lineTo(b.x + diff.x / mag * cap, b.y + diff.y / mag * cap);
 
-				this.ctx.strokeStyle = "white";
+				this.ctx.strokeStyle = "#856440";
 				this.ctx.lineWidth = 70 * scale;
 				this.ctx.lineCap = "round";
 				this.ctx.stroke();
@@ -203,86 +205,152 @@ var pipe;
 			this.ctx.restore();
 		}
 
-		drawPath(60, "orange");
-		drawPath(50, "grey");
+		drawPath(50, "#b03568");
 
-		for (let i = 0; i < this.points.length - 1; ++i) {
-			let start = transformPoint(this.points[i]);
-			let end = transformPoint(this.points[i+1]);
-			let color = "blue";
-			if (this.pipe.sim.flow < 0) {
-				let temp = start;
-				start = end;
-				end = temp;
-				color = "red";
-			}
-			let diff = v2.sub(end, start);
-			let mag = diff.mag();
-			let dir = v2.scale(diff, 1/mag);
-
-			let ideal = 250 * Math.abs(this.pipe.sim.flow) * scale;
-			if (ideal == 0) continue;
-			let calc = mag / ideal * Math.abs(this.pipe.sim.flow);
-			let numSections = Math.round(calc < 2 ? 2 : calc);
-			let size = mag / numSections;
-			let gap = 0.2 / this.pipe.sim.pressure;
-			for (let j = 0; j < numSections; ++j) {
-				let a = (this.animTime - gap) % 1;
-				let b = 1 - (this.animTime + gap) % 1;
-				let s1 = v2.add(start, v2.scale(dir, size * j));
-				let e1 = v2.add(s1, v2.scale(dir, size * a));
-				let e2 = v2.add(start, v2.scale(dir, size * (j+1)));
-				let s2 = v2.sub(e2, v2.scale(dir, size * b));
-
-				let c = (this.animTime - 1 + gap) % 1;
-				let d = (this.animTime - 1 + (1 - gap)) % 1;
-				let s3 = v2.add(s1, v2.scale(dir, size * c));
-				let e3 = v2.add(s1, v2.scale(dir, size * d));
-
-				if (a < 1 - gap * 2) {
-					this.ctx.beginPath();
-					this.ctx.moveTo(s1.x, s1.y);
-					this.ctx.lineTo(e1.x, e1.y);
-
-					this.ctx.strokeStyle = color;
-					this.ctx.lineWidth = 50 * scale;
-					this.ctx.lineCap = "round";
-					this.ctx.stroke();
-
-					this.ctx.beginPath();
-					this.ctx.moveTo(e2.x, e2.y);
-					this.ctx.lineTo(s2.x, s2.y);
-
-					this.ctx.strokeStyle = color;
-					this.ctx.lineWidth = 50 * scale;
-					this.ctx.lineCap = "round";
-					this.ctx.stroke();
+		if (pipe.simulate) {
+			for (let i = 0; i < this.points.length - 1; ++i) {
+				let start = transformPoint(this.points[i]);
+				let end = transformPoint(this.points[i+1]);
+				let color = "#752c55";
+				if (this.pipe.sim.flow < 0) {
+					let temp = start;
+					start = end;
+					end = temp;
+					color = "#3a2342";
 				}
-				else {
-					this.ctx.beginPath();
-					this.ctx.moveTo(s3.x, s3.y);
-					this.ctx.lineTo(e3.x, e3.y);
+				let diff = v2.sub(end, start);
+				let mag = diff.mag();
+				let dir = v2.scale(diff, 1/mag);
 
-					this.ctx.strokeStyle = color;
-					this.ctx.lineWidth = 50 * scale;
-					this.ctx.lineCap = "round";
-					this.ctx.stroke();
+				let ideal = 250 * Math.abs(this.pipe.sim.flow) * scale;
+				if (ideal == 0) continue;
+				let calc = mag / ideal * Math.abs(this.pipe.sim.flow);
+				let numSections = Math.round(calc < 2 ? 2 : calc);
+				let size = mag / numSections;
+				let gap = 0.2 / this.pipe.sim.pressure;
+				for (let j = 0; j < numSections; ++j) {
+					let a = (this.animTime - gap) % 1;
+					let b = 1 - (this.animTime + gap) % 1;
+					let s1 = v2.add(start, v2.scale(dir, size * j));
+					let e1 = v2.add(s1, v2.scale(dir, size * a));
+					let e2 = v2.add(start, v2.scale(dir, size * (j+1)));
+					let s2 = v2.sub(e2, v2.scale(dir, size * b));
+
+					let c = (this.animTime - 1 + gap) % 1;
+					let d = (this.animTime - 1 + (1 - gap)) % 1;
+					let s3 = v2.add(s1, v2.scale(dir, size * c));
+					let e3 = v2.add(s1, v2.scale(dir, size * d));
+
+					if (a < 1 - gap * 2) {
+						this.ctx.beginPath();
+						this.ctx.moveTo(s1.x, s1.y);
+						this.ctx.lineTo(e1.x, e1.y);
+
+						this.ctx.strokeStyle = color;
+						this.ctx.lineWidth = 50 * scale;
+						this.ctx.lineCap = "round";
+						this.ctx.stroke();
+
+						this.ctx.beginPath();
+						this.ctx.moveTo(e2.x, e2.y);
+						this.ctx.lineTo(s2.x, s2.y);
+
+						this.ctx.strokeStyle = color;
+						this.ctx.lineWidth = 50 * scale;
+						this.ctx.lineCap = "round";
+						this.ctx.stroke();
+					}
+					else {
+						this.ctx.beginPath();
+						this.ctx.moveTo(s3.x, s3.y);
+						this.ctx.lineTo(e3.x, e3.y);
+
+						this.ctx.strokeStyle = color;
+						this.ctx.lineWidth = 50 * scale;
+						this.ctx.lineCap = "round";
+						this.ctx.stroke();
+					}
 				}
 			}
+			this.animTime += time * Math.abs(this.pipe.sim.flow);
 		}
-		this.animTime += time * Math.abs(this.pipe.sim.flow);
 
 		for (let i = 0; i < this.points.length - 1; ++i) {
+			let p1 = transformPoint(this.points[i]);
+			let p2 = transformPoint(this.points[i+1]);
+			let maxwidth = v2.sub(p1, p2).mag();
+			let mid = v2.scale(v2.add(p1, p2), 0.5);
+
+			let angle = Math.atan2( p2.y-p1.y, p2.x-p1.x );
+			if (this.state.hovering && !this.state.dragging && this.interactState.closest && i == this.interactState.closest.segment) {
+				this.ctx.save();
+
+				this.ctx.strokeStyle = "#b03568";
+				this.ctx.lineWidth = 10;
+				this.ctx.lineCap = "round";
+
+				let q = transformPoint(this.interactState.closest.point);
+				this.ctx.translate(q.x, q.y);
+				this.ctx.scale(scale, scale);
+				this.ctx.rotate(angle);
+
+				this.ctx.beginPath();
+				this.ctx.moveTo(0, 120);
+				this.ctx.lineTo(0, 180);
+				this.ctx.stroke();
+
+				this.ctx.beginPath();
+				this.ctx.moveTo(0, -120);
+				this.ctx.lineTo(0, -180);
+				this.ctx.stroke();
+
+				this.ctx.restore();
+			}
+
+			if (angle > Math.PI / 2) {
+				angle += Math.PI;
+			}
+			else if (angle < -Math.PI / 2) {
+				angle -= Math.PI;
+			}
+
 			this.ctx.save();
-			let mid = v2.scale(v2.add(transformPoint(this.points[i]), transformPoint(this.points[i+1])), 0.5);
 
 			this.ctx.translate(mid.x, mid.y);
 			this.ctx.scale(scale, scale);
-			this.ctx.font = "15px Arial";
+			this.ctx.rotate(angle);
+			this.ctx.translate(0, -50);
+
+			this.ctx.beginPath();
+			this.ctx.font = "30px Open Sans";
+			let a = this.ctx.measureText(this.pipe.properties.name).width;
+			let b = this.ctx.measureText(`status: ${this.pipe.properties.status}`).width;
+			let w = a > b ? a : b;
+			w += 200;
+			if (w > maxwidth) {
+				let sc = maxwidth / w;
+				this.ctx.translate(0, (1 - sc) * 15);
+				this.ctx.scale(sc, sc);
+			}
+			/*let h = 50;
+			this.ctx.fillStyle = "rgba(100, 0, 50, 1.0)";
+			this.ctx.roundRect(-w / 2, -h / 2, w, h, 5 * scale);
+			this.ctx.fill();
+
+			this.ctx.lineWidth = 3 * scale;
+			this.ctx.strokeStyle = "rgba(255, 163, 33, 1.0)";
+			this.ctx.roundRect(-w / 2, -h / 2, w, h, 5 * scale);
+			this.ctx.stroke();*/
+
 			this.ctx.textAlign = "center";
-			this.ctx.fillStyle = "blue";
-			this.ctx.fillText(`${this.pipe.properties.name}`, 0,- 10);
-			this.ctx.fillStyle = "green";
+			this.ctx.fillStyle = "#a88d68";
+			this.ctx.fillText(`${this.pipe.properties.name}`, 0, -18);
+			if (this.pipe.properties.status == "WORKING") {
+				this.ctx.fillStyle = "#37734c";
+			}
+			else {
+				this.ctx.fillStyle = "#ad3450";
+			}
 			this.ctx.fillText(`status: ${this.pipe.properties.status}`,0, 10);
 
 			this.ctx.restore();

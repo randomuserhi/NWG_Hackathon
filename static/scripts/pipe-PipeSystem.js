@@ -52,7 +52,7 @@ var pipe;
     		}
 
     		// simulate code would go here
-    		// ...
+    		
 
     		requestAnimationFrame(this.render.bind(this));
     	}

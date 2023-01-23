@@ -8,3 +8,14 @@
 .node-renderer {
 	z-index: 750;
 }
+
+.sus {
+	width: 65px;
+	height: 65px;
+	margin: 0;
+	border-style: none;
+	padding: 0;
+}
+.sus:hover {
+	background-color: #b5b7bd;
+}

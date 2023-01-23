@@ -16,7 +16,7 @@ var pipe;
 			demand: 0.1,
 			height: 10,
 			name: "",
-			status: "Working"
+			status: "WORKING"
 		}
 
 		this.sim = {
@@ -39,10 +39,10 @@ var pipe;
 
 		pipe.Renderer.call(this); // invoke inherited constructor
 		this.pipeNode = pipeNode;
-		this.radius = 35;
+		this.radius = 80;
 		this.width = 0;
 		this.height = 0;
-		this.padding = 200;
+		this.padding = 400;
 
 		this.state = {
 			hovering: true,
@@ -84,18 +84,47 @@ var pipe;
 		this.ctx.translate(this.width / 2, this.height / 2);
 		this.ctx.scale(scale, scale);
 
-		this.ctx.beginPath();
-		this.ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
+		if (this.state.hovering) {
+			this.ctx.beginPath();
+			this.ctx.arc(0, 0, this.radius - 10, 0, 2 * Math.PI);
 
-		this.ctx.fillStyle = this.state.hovering || this.state.selected ? "red" : "white";
+			this.ctx.strokeStyle = "#060424";
+			this.ctx.lineWidth = 10 * scale;
+			this.ctx.stroke();
+		}
+
+		this.ctx.beginPath();
+		this.ctx.arc(0, 0, 25, 0, 2 * Math.PI);
+
+		this.ctx.fillStyle = this.state.hovering || this.state.selected ? "#856440" : "#c4955e";
 		this.ctx.fill();
 
-		this.ctx.font = "30px Arial";
+		this.ctx.beginPath();
+
+		this.ctx.font = "80px Open Sans";
+		/*let a = this.ctx.measureText(this.pipeNode.properties.name).width;
+		let b = this.ctx.measureText(`status: ${this.pipeNode.properties.status}`).width;
+		let w = a > b ? a : b;
+		w += 20;
+		let h = 100;
+		this.ctx.fillStyle = "rgba(36, 47, 62, 0.5)";
+		this.ctx.roundRect(-w / 2, -180, w, h, 5 * scale);
+		this.ctx.fill();
+
+		this.ctx.lineWidth = 3 * scale;
+		this.ctx.strokeStyle = "rgba(255, 163, 33, 1.0)";
+		this.ctx.roundRect(-w / 2, -180, w, h, 5 * scale);
+		this.ctx.stroke();*/
+
 		this.ctx.textAlign = "center";
-		this.ctx.fillStyle = "blue";
-		this.ctx.fillText(`${this.pipeNode.properties.name}`, 0, -120);
-		this.ctx.fillStyle = "green";
-		this.ctx.fillText(`status: ${this.pipeNode.properties.status}`, 0, -80);
+		this.ctx.fillStyle = "#f3cf9c";
+		this.ctx.fillText(`${this.pipeNode.properties.name}`, 0, -240);
+		if (this.pipeNode.properties.status == "WORKING")
+			this.ctx.fillStyle = "#4db070";
+		else
+			this.ctx.fillStyle = "#eb466d";
+		this.ctx.fillText(`status: ${this.pipeNode.properties.status}`, 0, -140);
+
 
 		this.ctx.restore();
 	}

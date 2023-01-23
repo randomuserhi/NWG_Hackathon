@@ -94,6 +94,7 @@ var pipe;
 
 	pipe.editN = null;
 	pipe.editP = null;
+	pipe.simulate = false;
 	pipe.init = function() {
 		pipe.init_PipeSystemRenderer();
 
@@ -110,6 +111,8 @@ var pipe;
 		pipe.editor.activeSystem = pipe.system;
 		pipe.editor.setMap(map.instance);
 
+		document.getElementById("simulate").addEventListener("click", () => { pipe.simulate = !pipe.simulate; });
+
 		let edit = document.getElementById("edit");
 		let create = document.getElementById("create");
 		let join = document.getElementById("join");
@@ -117,8 +120,8 @@ var pipe;
 		let select = document.getElementById("select");
 
 		select.addEventListener("click", () => {
-			document.getElementById("item-content-pipe").style.display = "none";
-			document.getElementById("item-content-node").style.display = "none";
+			document.getElementById("item-content-pipe").style.top = "-200px";
+			document.getElementById("item-content-node").style.top = "-200px";
 			if (pipe.editor.interactState.selected) pipe.editor.interactState.selected.state.selected = false;
 			if (pipe.editor.interactState.start) pipe.editor.interactState.start.state.selected = false;
 			if (pipe.editor.interactState.end) pipe.editor.interactState.end.state.selected = false;
@@ -137,8 +140,8 @@ var pipe;
 			};
 		});
 		edit.addEventListener("click", () => {
-			document.getElementById("item-content-pipe").style.display = "none";
-			document.getElementById("item-content-node").style.display = "none";
+			document.getElementById("item-content-pipe").style.top = "-200px";
+			document.getElementById("item-content-node").style.top = "-200px";
 			if (pipe.editor.interactState.selected) pipe.editor.interactState.selected.state.selected = false;
 			if (pipe.editor.interactState.start) pipe.editor.interactState.start.state.selected = false;
 			if (pipe.editor.interactState.end) pipe.editor.interactState.end.state.selected = false;
@@ -157,8 +160,8 @@ var pipe;
 			};
 		});
 		create.addEventListener("click", () => {
-			document.getElementById("item-content-pipe").style.display = "none";
-			document.getElementById("item-content-node").style.display = "none";
+			document.getElementById("item-content-pipe").style.top = "-200px";
+			document.getElementById("item-content-node").style.top = "-200px";
 			if (pipe.editor.interactState.selected) pipe.editor.interactState.selected.state.selected = false;
 			if (pipe.editor.interactState.start) pipe.editor.interactState.start.state.selected = false;
 			if (pipe.editor.interactState.end) pipe.editor.interactState.end.state.selected = false;
@@ -177,8 +180,8 @@ var pipe;
 			};
 		});
 		join.addEventListener("click", () => {
-			document.getElementById("item-content-pipe").style.display = "none";
-			document.getElementById("item-content-node").style.display = "none";
+			document.getElementById("item-content-pipe").style.top = "-200px";
+			document.getElementById("item-content-node").style.top = "-200px";
 			if (pipe.editor.interactState.selected) pipe.editor.interactState.selected.state.selected = false;
 			if (pipe.editor.interactState.start) pipe.editor.interactState.start.state.selected = false;
 			if (pipe.editor.interactState.end) pipe.editor.interactState.end.state.selected = false;
@@ -197,8 +200,8 @@ var pipe;
 			};
 		});
 		del.addEventListener("click", () => {
-			document.getElementById("item-content-pipe").style.display = "none";
-			document.getElementById("item-content-node").style.display = "none";
+			document.getElementById("item-content-pipe").style.top = "-200px";
+			document.getElementById("item-content-node").style.top = "-200px";
 			if (pipe.editor.interactState.selected) pipe.editor.interactState.selected.state.selected = false;
 			if (pipe.editor.interactState.start) pipe.editor.interactState.start.state.selected = false;
 			if (pipe.editor.interactState.end) pipe.editor.interactState.end.state.selected = false;

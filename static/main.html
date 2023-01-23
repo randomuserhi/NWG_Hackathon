@@ -20,32 +20,33 @@
             <div id="map"></div>
         </div>
         <div class="content overlay">
-            <div style="position: absolute; right: 0; top: 0; pointer-events: auto;">
-                <div>
-                    <button id="select">Select</button>
-                    <button id="edit">Edit</button>
-                    <button id="create">Create</button>
-                    <button id="join">Join</button>
-                    <button id="delete">Delete</button>
+            <div style="position: absolute; right: 0; top: 0; display: flex; flex-direction: column; pointer-events: auto;">
+                <div style="display: flex; flex-direction: row;">
+                    <button class="sus" style="border-radius: 0 0 0 10px;" id="select">Select</button>
+                    <button class="sus" id="edit">Edit</button>
+                    <button class="sus" id="create">Create</button>
+                    <button class="sus" id="join">Join</button>
+                    <button class="sus" id="delete">Delete</button>
+                    <button class="sus" id="simulate">Simulate</button>
                 </div>
-                <div id="item-content-pipe">
-                    <div>
+                <div style="border-radius: 10px; background-color: white; padding: 15px; margin: 20px; position: absolute; top: -200px; right: 0px; transition: top 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; display: flex; flex-direction: column; gap: 10px;" id="item-content-pipe">
+                    <div style="display:flex; gap: 20px;">
                         <span>Name: </span>
                         <input type="text" id="pipe-name"></input>
                     </div>
-                    <div>
+                    <div style="display:flex; gap: 20px;">
                         <span>Flow: </span>
                         <input type="range" min="-100" max="100" value="50" id="pipe-flow"></input>
                     </div>
-                    <div>
+                    <div style="display:flex; gap: 20px;">
                         <span>Pressure: </span>
                         <input type="range" min="1" max="100" value="50" id="pipe-pressure"></input>
                     </div>
-                    <div>
+                    <div style="display:flex; gap: 20px;">
                         <span>Diameter: </span>
                         <input type="number" id="pipe-diameter"></input>
                     </div>
-                    <div>
+                    <div style="display:flex; gap: 20px;">
                         <span>Status: </span>
                         <select id="pipe-status">
                             <option value="WORKING" selected>WORKING</option>
@@ -53,7 +54,7 @@
                         </select>
                     </div>
                 </div>
-                <div id="item-content-node">
+                <div style="border-radius: 10px; background-color: white; padding: 15px; margin: 20px; position: absolute; top: -200px; right: 0px; transition: top 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; display: flex; flex-direction: column; gap: 10px;" id="item-content-node">
                     <div>
                         <span>Name: </span>
                         <input type="text" id="node-name"></input>
