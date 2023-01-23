@@ -150,7 +150,7 @@ var pipe;
 					}
 				}
 				else if (this.interactState.mode == "JOIN" && event == "mousedown") {
-					if (this.interactState.target) {
+					if (this.interactState.target && this.interactState.type == "NODE") {
 						if (!this.interactState.start) {
 							this.interactState.start = this.interactState.target;
 							this.interactState.start.state.selected = true;
