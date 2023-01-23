@@ -1,4 +1,34 @@
 let url = new URL(window.location.href).hostname;
+let coordinates;
+
+window.submitReport = async function(event){
+            
+    event.preventDefault();
+    
+    let userName = document.getElementById("reportName").value;
+    let userDescription = document.getElementById("reportDescription").value;
+    
+    try{
+        let payload = {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify({
+                name: userName,
+                description: userDescription,
+                coords: coordinates
+            })
+        }; 
+        
+        let response = await fetch(`http://${url}:3000/report`, payload);
+        let data = await response.json();
+        
+        alert(data);
+        
+    } catch(e){
+        alert(e);
+    }
+            
+}
 
 function init() {
     let Coords = {lat: 54.77557699364985, lng: -1.5854189367600946};
@@ -96,39 +126,46 @@ function init() {
         panControl: false,
         fullscreenControl: false
     });
+    
     let infoWindow = new google.maps.InfoWindow({
         content: "Click to send a report at your location on the map :)",
         position: Coords,
     });
+    
+    let report;
+    
+    let submissionForm = [
+        "<b>Report a problem here?</b><br>",
+        "<form id='reportForm'>",
+        "Name: <input id='reportName' type='text' />",
+        "Description: <input id='reportDescription' type='text' />",
+        "<input type='button' id='reportSubmit' value='Submit' onclick='submitReport(event)'>",
+        "</form>"
+    ].join("");
+    
     infoWindow.open(map);
     
     map.addListener("click", async function(mapsMouseEvent) {
-        infoWindow.close();
-        infoWindow = new google.maps.InfoWindow({
-            position: mapsMouseEvent.latLng
-        });
-        infoWindow.setContent(
-            JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
-        );
-        infoWindow.open(map);
         
-        try{
-            let payload = {
-                method: "POST",
-                headers: { "Content-Type": "application/json"},
-                body: JSON.stringify(mapsMouseEvent.latLng)
-            }; 
+        infoWindow.close();
+        
+        coordinates = mapsMouseEvent.latLng;
+        
+        infoWindow = new google.maps.InfoWindow({
+            position: coordinates,
+            content: submissionForm
+        });            
+        
+        infoWindow.setOptions({
+            minWidth: 200,
+            maxWidth: 200   
+        });
+         
+        infoWindow.open(map);
             
-            let response = await fetch(`http://${url}:3000/report`, payload);
-            let data = await response.json();
-            
-            alert(data);
-            
-        }catch(e){
-            alert(e);
-        }
         
     });
 };
+
 
 window.init = init;

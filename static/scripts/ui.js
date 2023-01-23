@@ -30,6 +30,9 @@ var ui;
         // Swap SideBar colour scheme
         let sidebar = document.getElementById("sidebar");
         sidebar.classList.toggle("light");
+        
+        // Swap Heatmap colour scheme
+        map.heatmap.set("gradient", map.heatmap.get("gradient") ? null : map.heatMapGradient)
     }
     
     ui.toggleSidebar = function() {
@@ -41,12 +44,29 @@ var ui;
         try {
             let response = await fetch("http://127.0.0.1:3000/refresh");
             let newData = await response.json();
+            if (newData.length != 0){
+                (map.reportData).push(...newData);
+            };
+            
             map.updateHeatmap(newData);
         } catch(e) {
             console.log(e);
             alert(e);
-        }
+        };
   
     }
+    
+    ui.toggleHeatmapMarkers = function() {
+        if (map.heatmap.getMap() == map.instance){
+            (map.heatmap).setMap(null);
+            (map.markers).set("visible", map.instance);
+        } else {
+            (map.heatmap).setMap(map.instance);
+            (map.markers).set("visible", null);
+            map.infoWindow.close();
+        };
+    }
+    
+    setInterval(ui.refreshHeatmap, 5);
 
 })(ui || (ui = {}));
