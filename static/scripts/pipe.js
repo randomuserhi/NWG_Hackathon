@@ -95,16 +95,12 @@ var pipe;
 	pipe.editN = null;
 	pipe.editP = null;
 	pipe.simulate = false;
+	pipe.current = null
 	pipe.init = function() {
 		pipe.init_PipeSystemRenderer();
 
 		// TEST CODE
 		pipe.system = new pipe.PipeSystem();
-
-		let a = new pipe.PipeNode({ lat: 54.77556699364985, lng: -1.5854189367600946 });
-		let b = new pipe.PipeNode({ lat: 54.77559699364985, lng: -1.5854289367600946 });
-		pipe.system.nodes.push(a);
-		pipe.system.nodes.push(b);
 
 		pipe.editor = new pipe.Editor();
 		pipe.editor.systems.push(pipe.system);
@@ -118,6 +114,7 @@ var pipe;
 		let join = document.getElementById("join");
 		let del = document.getElementById("delete");
 		let select = document.getElementById("select");
+		pipe.current = select;
 
 		select.addEventListener("click", () => {
 			document.getElementById("item-content-pipe").style.top = "-200px";
@@ -138,6 +135,11 @@ var pipe;
 				editMode: true,
 				selected: null
 			};
+			if (pipe.current) {
+				pipe.current.classList.remove("selected");
+			}
+			pipe.current = select;
+			pipe.current.classList.add("selected");
 		});
 		edit.addEventListener("click", () => {
 			document.getElementById("item-content-pipe").style.top = "-200px";
@@ -158,6 +160,11 @@ var pipe;
 				editMode: true,
 				selected: null
 			};
+			if (pipe.current) {
+				pipe.current.classList.remove("selected");
+			}
+			pipe.current = edit;
+			pipe.current.classList.add("selected");
 		});
 		create.addEventListener("click", () => {
 			document.getElementById("item-content-pipe").style.top = "-200px";
@@ -178,6 +185,11 @@ var pipe;
 				editMode: true,
 				selected: null
 			};
+			if (pipe.current) {
+				pipe.current.classList.remove("selected");
+			}
+			pipe.current = create;
+			pipe.current.classList.add("selected");
 		});
 		join.addEventListener("click", () => {
 			document.getElementById("item-content-pipe").style.top = "-200px";
@@ -198,6 +210,11 @@ var pipe;
 				editMode: true,
 				selected: null
 			};
+			if (pipe.current) {
+				pipe.current.classList.remove("selected");
+			}
+			pipe.current = join;
+			pipe.current.classList.add("selected");
 		});
 		del.addEventListener("click", () => {
 			document.getElementById("item-content-pipe").style.top = "-200px";
@@ -218,6 +235,11 @@ var pipe;
 				editMode: true,
 				selected: null
 			};
+			if (pipe.current) {
+				pipe.current.classList.remove("selected");
+			}
+			pipe.current = del;
+			pipe.current.classList.add("selected");
 		});
 
 		let onChange = function(el, callback) {

@@ -19,3 +19,7 @@
 .sus:hover {
 	background-color: #b5b7bd;
 }
+
+.sus.selected {
+	background-color: #b5b7bd;
+}
